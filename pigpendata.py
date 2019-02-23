@@ -12,6 +12,14 @@ class PigPenData():
         self.test = test
         self.validate = validate
         self.wonkiness = wonkiness
+        self.cipher = {}
+        for char in range(65, 91):
+            img = cv2.imread('char(' + repr(char) + ').png')
+            gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+            rows, cols = gray.shape
+            M = np.float32([[1, 0, 6], [0, 1, 0]])
+            dst = cv2.warpAffine(gray, M, (cols, rows), borderValue=255)
+            self.cipher[char-65] = dst
 
     def _four_point_transform(self, image: np.array, pts: np.array):
         # obtain a consistent order of the points and unpack them
@@ -70,10 +78,11 @@ class PigPenData():
         images = []
         characters = []
         for _ in range(length):
-            char = randint(65, 90)
-            characters.append(chr(char))
-            img = cv2.imread('char(' + repr(char) + ').png')
-            gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+            char = randint(0, 25)
+            onehot = [0 for _ in range(26)]
+            onehot[char] = 1
+            characters.append(onehot)
+            gray = self.cipher[char]
             wonk = self._wonkify(gray, 8)
             wonk = cv2.resize(wonk, gray.shape, interpolation=cv2.INTER_CUBIC)
             images.append(wonk)
