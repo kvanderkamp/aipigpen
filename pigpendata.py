@@ -83,7 +83,7 @@ class PigPenData():
             onehot[char] = 1
             characters.append(onehot)
             gray = self.cipher[char]
-            wonk = self._wonkify(gray, 8)
+            wonk = self._wonkify(gray, wonkiness)
             wonk = cv2.resize(wonk, gray.shape, interpolation=cv2.INTER_CUBIC)
             images.append(wonk)
         return (images, characters)
